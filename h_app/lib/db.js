@@ -1,4 +1,4 @@
-const pool = mysql.createPool({  
+const pool = mysq.createPool({  
     host: 'localhost',  
     user: 'root', // Thay thế với người dùng của bạn  
     password: '', // Thay thế với mật khẩu của bạn  
