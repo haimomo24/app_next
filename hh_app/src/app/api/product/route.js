@@ -44,3 +44,25 @@ export async function POST(req) {
     });
   }
 }
+export async function DELETE(req) {
+  try {
+    const { id } = await req.json(); // Get product ID from the request body
+    const connection = await pool.getConnection();
+
+    // Delete the product from the database
+    await connection.execute('DELETE FROM product WHERE id = ?', [id]);
+
+    connection.release();
+
+    return new Response(JSON.stringify({ message: 'Product deleted successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}

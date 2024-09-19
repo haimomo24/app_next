@@ -1,6 +1,54 @@
-import React from 'react'
+'use client'
+
+
+import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react'
 
 const ShoesProduct = () => {
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // State for pagination
+    const productsPerPage = 6; // Show 6 products per page
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const res = await fetch('/api/product');
+    
+            // Check if the response is successful
+            if (!res.ok) {
+                console.error('Error fetching products:', res.status, res.statusText);
+                return;
+            }
+    
+            const data = await res.json();
+            
+            // Filter the products by category "vot"
+            const filteredProducts = data.filter(product => product.category === 'giay');
+            
+            setProducts(filteredProducts);
+        };
+    
+        fetchProduct();
+    }, []);
+
+    // Get the products for the current page
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    // Function to go to the next page
+    const nextPage = () => {
+        if (currentPage < Math.ceil(products.length / productsPerPage)) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
+
+    // Function to go to the previous page
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+        }
+    };
   return (
    <>
    <div className="container mx-auto  p-4">
@@ -23,71 +71,41 @@ const ShoesProduct = () => {
 
                     {/* Products */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-[10px] md:w-2/3">
-                        {/* Product Card 1 */}
-                        <div className="border rounded-lg  p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/giay-cau-long-lining-yat003-3-chinh-hang_1713836711.webp"
-                                alt="Product 1"
-                                className="w-full h-40 object-cover rounded"
-                            />
-                            <h3 className="font-bold mt-2">Giày Cầu Lông Yonex Aerus Z Women 2024</h3>
-                            <p className="text-red-500">2.599.000đ <span className="line-through text-gray-500">2.800.000đ</span></p>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
+                        {currentProducts.map((product) => (
+                            <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
+                                <img src={product.images}
+                                    alt={product.name}
+                                    className="w-full h-60 object-cover rounded"
+                                />
+                                <h3 className="font-bold mt-2">{product.name}</h3>
+                                <p className="text-red-500">{product.price}.VND </p>
+                                <p className="text-green-500">{product.status}</p>
+                            </div>
+                        ))}
+                    </div>
 
-                        {/* Product Card 2 */}
-                        <div className="border rounded-lg p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-nanoflare-700-game-silver-sky-blue-chinh-hang_1725409054.webp" 
-                            alt="Product 2" 
-                            className="w-full h-40 object-cover rounded"
-                             />
-                            <h3 className="font-bold mt-2">Vợt Yonex Nanoflare 700 Game</h3>
-                            <p className="text-red-500">2.599.000đ <span className="line-through text-gray-500">2.800.000đ</span></p>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
+                       
+                    </div>
+                     {/* Pagination Controls */}
+                <div className="flex justify-end mt-8 w-full">
+                <button 
+                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`} 
+                            onClick={prevPage}
+                            disabled={currentPage === 1}
+                        >
+                            <FontAwesomeIcon icon={faCaretLeft} className="text-orange-500 flex justify-center h-5 w-5" />
+                        </button>
 
-                        {/* Thêm các sản phẩm khác tương tự */}
-                        {/* Product Card 3 */}
-                        <div className="border rounded-lg p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-victor-ryuga-metallic-china-open-2024-noi-dia-trung_1726449913.webp" 
-                            alt="Product 3" 
-                            className="w-full h-40 object-cover rounded" 
-                            />
-                            <h3 className="font-bold mt-2">Vợt Victor Brave Sword 12</h3>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
-
-                        {/* Product Card 4 */}
-                        <div className="border rounded-lg p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-victor-ryuga-metallic-china-open-2024-noi-dia-trung_1726449913.webp" 
-                            alt="Product 4" 
-                            className="w-full h-40 object-cover rounded" 
-                            />
-                            <h3 className="font-bold mt-2">Vợt Victor Brave Sword 12</h3>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
-                        {/* Product Card 2 */}
-                        <div className="border rounded-lg p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-nanoflare-700-game-silver-sky-blue-chinh-hang_1725409054.webp" 
-                            alt="Product 2" 
-                            className="w-full h-40 object-cover rounded"
-                             />
-                            <h3 className="font-bold mt-2">Vợt Yonex Nanoflare 700 Game</h3>
-                            <p className="text-red-500">2.599.000đ <span className="line-through text-gray-500">2.800.000đ</span></p>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
-                        {/* Product Card 2 */}
-                        <div className="border rounded-lg p-4 bg-white shadow-md transition transform hover:scale-105">
-                            <img src="https://cdn.shopvnb.com/img/300x300/uploads/gallery/vot-cau-long-yonex-nanoflare-700-game-silver-sky-blue-chinh-hang_1725409054.webp" 
-                            alt="Product 2" 
-                            className="w-full h-40 object-cover rounded"
-                             />
-                            <h3 className="font-bold mt-2">Vợt Yonex Nanoflare 700 Game</h3>
-                            <p className="text-red-500">2.599.000đ <span className="line-through text-gray-500">2.800.000đ</span></p>
-                            <p className="text-green-500">Còn hàng</p>
-                        </div>
+                        <button 
+                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === Math.ceil(products.length / productsPerPage) ? 'cursor-not-allowed' : ''}`} 
+                            onClick={nextPage}
+                            disabled={currentPage === Math.ceil(products.length / productsPerPage)}
+                        >
+                             <FontAwesomeIcon icon={faCaretRight} className="text-orange-500 flex justify-center h-5 w-5" />
+                        </button>
                     </div>
                 </div>
-            </div>
+            
    </>
   )
 }

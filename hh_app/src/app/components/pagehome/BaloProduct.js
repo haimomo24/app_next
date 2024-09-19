@@ -1,6 +1,7 @@
 import React from 'react'
 
 const BaloProduct = () => {
+    
   return (
     <>
     <div className="container mx-auto  p-4">
