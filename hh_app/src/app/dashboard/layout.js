@@ -1,7 +1,7 @@
 import React from 'react'
 import HeaderDashboard from '../components/dashboard/admin/HeaderDashboard'
 
-const LayoutDashBoard = () => {
+const LayoutDashBoard = ({children}) => {
     return (
         <div>
             <div className="flex">  
@@ -14,7 +14,7 @@ const LayoutDashBoard = () => {
     {/* Phần Layout bên phải */}  
     <div className="flex-1 bg-gray-100 h-screen p-4">  
         {/* Nội dung của layout */}  
-       
+       {children}
         {/* Thêm các phần tử khác vào đây */}  
     </div>  
    </div>  

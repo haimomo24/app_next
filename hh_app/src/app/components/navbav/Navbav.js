@@ -22,11 +22,14 @@ const Navbav = () => {
                             </li>
 
                             <li >
-                                <Link href='filters' className='py-3 inline-block w-full'>filters</Link>
+                                <Link href='filters' className='py-3 inline-block w-full'>Sản Phẩm </Link>
                             </li>
 
                             <li >
-                                <Link href='myproducts' className='py-3 inline-block w-full'>My Products </Link>
+                                <Link href='myproducts' className='py-3 inline-block w-full'>Tin tức  </Link>
+                            </li>
+                            <li >
+                                <Link href='myproducts' className='py-3 inline-block w-full'>Liên hệ   </Link>
                             </li>
                         </ul>
                     </nav>
