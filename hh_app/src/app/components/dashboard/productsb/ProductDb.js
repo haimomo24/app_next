@@ -70,7 +70,7 @@ const ProductDb = () => {
   };
   return (
     <>
-    <div className='mt-[-50px]'>
+    <div className='mt-[-50px] ml-[100px]'>
         <section className="py-24 relative">
           <div className="w-full max-w-7xl">
             <div className='flex justify-between items-center'>

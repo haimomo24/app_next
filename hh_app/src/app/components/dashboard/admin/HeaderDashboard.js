@@ -4,7 +4,7 @@ import React from 'react'
 const HeaderDashboard = () => {
   return (
     <div>
-        <nav className="bg-emerald-400 h-full w-64">  
+        <nav className="bg-emerald-400 h-full w-[100%]">  
     <div className="flex flex-col bg-emerald-400 h-full px-2 sm:px-6 lg:px-8">  
         <div className="flex items-center h-16">  
             <div className="flex-shrink-0 text-white">  
