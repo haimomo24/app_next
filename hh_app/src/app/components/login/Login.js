@@ -37,7 +37,7 @@ const Login = () => {
     >
       <img
         className="w-8 h-8 mr-2"
-        src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+        src="https://mms.img.susercontent.com/cc08c0c29d19165fc8a2dc2b95f558f7"
         alt="logo"
       />
       HH_STORE

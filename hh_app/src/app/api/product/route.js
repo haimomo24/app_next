@@ -20,18 +20,18 @@ export async function GET(req) {  // Export named cho phương thức GET
 }
 export async function POST(req) {
   try {
-    const { title, image, description, category } = await req.json();
+    const { title, images, description, category, name, price, status,  } = await req.json();
     const connection = await pool.getConnection();
 
     // Thêm sản phẩm vào database
     const [result] = await connection.execute(
-      'INSERT INTO product (title, image, description, category) VALUES (?, ?, ?, ?)',
-      [title, image, description, category]
+      'INSERT INTO product (name, price, title, images, description, category, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, price, title, images, description, category, status]
     );
 
     connection.release();
 
-    const newProduct = { id: result.insertId, title, image, description, category };
+    const newProduct = { id: result.insertId, name, price, title, images, description, category, status };
     return new Response(JSON.stringify(newProduct), {
       status: 201,
       headers: { 'Content-Type': 'application/json' },

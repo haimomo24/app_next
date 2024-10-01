@@ -1,6 +1,6 @@
 'use client'
 
-import { faCaretLeft, faCaretRight, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faCaretRight, faPenSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
@@ -101,7 +101,11 @@ const ProductDb = () => {
                     </h5>
                     {/* Delete Button */}
                     <button onClick={() => deleteProduct(product.id)} className="text-red-500">
-                    <FontAwesomeIcon icon={faTrash} className="text-orange-500 flex justify-center h-5 w-5" />
+                      <div className='flex '>
+                      <FontAwesomeIcon icon={faTrash} className="text-orange-500 flex justify-center h-5 w-5" />
+                      <FontAwesomeIcon icon={faPenSquare} className="text-orange-500 flex justify-center h-5 w-5 ml-2.5" />
+                      </div>
+                   
                     </button>
                   </div>
                   <p className="font-normal text-base leading-7 text-gray-500 mb-6">

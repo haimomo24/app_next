@@ -45,7 +45,7 @@ const Badmintonproduct = () => {
         setCurrentPage(1); // Reset to first page when adjusting price
     };
 
-    // Filter products based on the search query and price range
+    // tìm kiếm sản phẩm theo giá  và theo tên  
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         product.price >= priceRange[0] && product.price <= priceRange[1]
@@ -76,7 +76,7 @@ const Badmintonproduct = () => {
                 <h1 className="text-4xl text-orange-500 font-bold text-center mb-6">Vợt cầu Lông</h1>
                 <div className="flex flex-col md:flex-row">
                     {/* Sidebar */}
-                    <div className="md:w-1/3 h-100 mb-4 md:mb-0 border">
+                    <div className="md:w-1/3 h-auto mb-4 md:mb-0 border">
                         <div className="h-full p-6 rounded-lg">
                             <p className="mt-2 text-orange-500 ">Tìm kiếm sản phẩm </p>
                             <div className="flex items-center bg-gray-100 p-2 mt-[20px] rounded-full max-md:hidden">
@@ -106,7 +106,7 @@ const Badmintonproduct = () => {
                             <div className="flex flex-col md:flex-row"></div>
                             <img src="https://thethao365.com.vn/Data/upload/images/Product/Caulong/vot-cau-long-lining-chuyen-cong1.jpg"
                                 alt="Product 2"
-                                className="w-[100%] h-[70%] object-cover rounded"
+                                className=" w-[100%] h-[58%] object-cover rounded"
                             />
 
 

@@ -1,44 +1,67 @@
-'use client'
-
+'use client';
 
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 const ShoesProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // State for pagination
+    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [priceRange, setPriceRange] = useState([300000, 5000000]); // State for price range (0 to 5,000,000 VND)
+    const [isLoading, setIsLoading] = useState(true); // Loading state
+    const [error, setError] = useState(null); // Error state
     const productsPerPage = 6; // Show 6 products per page
 
     useEffect(() => {
         const fetchProduct = async () => {
-            const res = await fetch('/api/product');
-    
-            // Check if the response is successful
-            if (!res.ok) {
-                console.error('Error fetching products:', res.status, res.statusText);
-                return;
+            try {
+                const res = await fetch('/api/product');
+                if (!res.ok) {
+                    throw new Error(`Error fetching products: ${res.statusText}`);
+                }
+                const data = await res.json();
+
+                // Filter the products by category "giay"
+                const filteredProducts = data.filter(product => product.category === 'giay');
+                setProducts(filteredProducts);
+            } catch (error) {
+                setError(error.message);
+                console.error(error.message);
+            } finally {
+                setIsLoading(false); // Stop loading when fetch is complete
             }
-    
-            const data = await res.json();
-            
-            // Filter the products by category "vot"
-            const filteredProducts = data.filter(product => product.category === 'giay');
-            
-            setProducts(filteredProducts);
         };
-    
+
         fetchProduct();
     }, []);
 
-    // Get the products for the current page
+    // Handle search input change
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1); // Reset to first page when searching
+    };
+
+    // Handle price range change
+    const handlePriceRangeChange = (e) => {
+        setPriceRange([300000, e.target.value]);
+        setCurrentPage(1); // Reset to first page when adjusting price
+    };
+
+    // Filter products by search query and price range
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
+
+    // Pagination logic
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
     // Function to go to the next page
     const nextPage = () => {
-        if (currentPage < Math.ceil(products.length / productsPerPage)) {
+        if (currentPage < Math.ceil(filteredProducts.length / productsPerPage)) {
             setCurrentPage(prevPage => prevPage + 1);
         }
     };
@@ -49,65 +72,100 @@ const ShoesProduct = () => {
             setCurrentPage(prevPage => prevPage - 1);
         }
     };
-  return (
-   <>
-   <div className="container mx-auto  p-4">
-                <h1 className="text-4xl text-orange-500 font-bold text-center mb-6">Giày cầu lông  </h1>
+
+    // If loading, show a loading indicator
+    if (isLoading) {
+        return <div className="text-center text-orange-500 font-bold">Loading products...</div>;
+    }
+
+    // If error occurs, show error message
+    if (error) {
+        return <div className="text-center text-red-500 font-bold">Error: {error}</div>;
+    }
+
+    return (
+        <>
+            <div className="container mx-auto p-4">
+                <h1 className="text-4xl text-orange-500 font-bold text-center mb-6">Giày cầu lông</h1>
                 <div className="flex flex-col md:flex-row">
                     {/* Sidebar */}
-                    <div className="md:w-1/3 h-100 mb-4 md:mb-0 border ">
-                        <div className=" h-full  p-6 rounded-lg rounded-lg">
-                        <img src="https://thanhloisport.com/wp-content/uploads/2022/11/giay-cau-long-chinh-hang-01.jpg.webp" 
-                            alt="Product 2" 
-                            className="w-[100%] h-[80%] object-cover rounded"
-                             />
-                            
-                            <p className="mt-2">Badminton rackets</p>
-                            <button className="mt-4 bg-[#010101] text-orange-500 font-bold py-2 px-4 rounded">
-                                XEM NGAY
-                            </button>
+                    <div className="md:w-1/3 h-auto mb-4 md:mb-0 border">
+                        <div className="h-full p-6 rounded-lg">
+                            <p className="mt-2 text-orange-500">Tìm kiếm sản phẩm</p>
+                            <div className="flex items-center bg-gray-100 p-2 mt-4 rounded-full">
+                                <input
+                                    type="text"
+                                    placeholder="Search"
+                                    className="outline-none bg-transparent ml-2 caret-blue-500 placeholder:font-light placeholder:text-gray-600 text-[15px] w-full"
+                                    value={searchQuery}
+                                    onChange={handleSearch}
+                                />
+                            </div>
+                            {/* Price Range Slider */}
+                            <div className="mb-6 mt-4">
+                                <label className="block mb-2 text-orange-500">Giá (300.000 - 5,000,000 VND):</label>
+                                <input
+                                    type="range"
+                                    min="300000"
+                                    max="5000000"
+                                    value={priceRange[1]}
+                                    className="w-full"
+                                    onChange={handlePriceRangeChange}
+                                />
+                                <p className="text-right text-gray-600">Giá tối đa: {priceRange[1]} VND</p>
+                            </div>
+                            <img
+                                src="https://thegioicaulong.vn/wp-content/uploads/2024/06/top-5-giay-cau-long.jpg"
+                                alt="Banner"
+                                className="w-full h-60 object-cover rounded"
+                            />
                         </div>
                     </div>
 
                     {/* Products */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-[10px] md:w-2/3">
-                        {currentProducts.map((product) => (
-                            <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
-                                <img src={product.images}
-                                    alt={product.name}
-                                    className="w-full h-60 object-cover rounded"
-                                />
-                                <h3 className="font-bold mt-2">{product.name}</h3>
-                                <p className="text-red-500">{product.price}.VND </p>
-                                <p className="text-green-500">{product.status}</p>
-                            </div>
-                        ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-4 md:w-2/3">
+                        {currentProducts.length > 0 ? (
+                            currentProducts.map((product) => (
+                                <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
+                                    <img
+                                        src={product.images}
+                                        alt={product.name}
+                                        className="w-full h-60 object-cover rounded"
+                                    />
+                                    <h3 className="font-bold mt-2">{product.name}</h3>
+                                    <p className="text-red-500">{product.price} VND</p>
+                                    <p className="text-green-500">{product.status}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-gray-500 col-span-full">Không có sản phẩm nào.</p>
+                        )}
                     </div>
+                </div>
 
-                       
-                    </div>
-                     {/* Pagination Controls */}
-                <div className="flex justify-end mt-8 w-full">
-                <button 
-                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`} 
+                {/* Pagination Controls */}
+                {filteredProducts.length > productsPerPage && (
+                    <div className="flex justify-end mt-8 w-full">
+                        <button
+                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`}
                             onClick={prevPage}
                             disabled={currentPage === 1}
                         >
-                            <FontAwesomeIcon icon={faCaretLeft} className="text-orange-500 flex justify-center h-5 w-5" />
+                            <FontAwesomeIcon icon={faCaretLeft} className="text-orange-500 h-5 w-5" />
                         </button>
 
-                        <button 
-                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === Math.ceil(products.length / productsPerPage) ? 'cursor-not-allowed' : ''}`} 
+                        <button
+                            className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === Math.ceil(filteredProducts.length / productsPerPage) ? 'cursor-not-allowed' : ''}`}
                             onClick={nextPage}
-                            disabled={currentPage === Math.ceil(products.length / productsPerPage)}
+                            disabled={currentPage === Math.ceil(filteredProducts.length / productsPerPage)}
                         >
-                             <FontAwesomeIcon icon={faCaretRight} className="text-orange-500 flex justify-center h-5 w-5" />
+                            <FontAwesomeIcon icon={faCaretRight} className="text-orange-500 h-5 w-5" />
                         </button>
                     </div>
-                </div>
-            
-   </>
-  )
-}
+                )}
+            </div>
+        </>
+    );
+};
 
-export default ShoesProduct
+export default ShoesProduct;

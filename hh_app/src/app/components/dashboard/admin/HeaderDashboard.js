@@ -20,7 +20,7 @@ const HeaderDashboard = () => {
                     Danh mục sản phẩm  
                 </Link>  
                 <Link href="/dashboard/userdb" className="text-black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">  
-                    Tài khoản 
+                    Danh sách đơn hàng 
                 </Link>  
                 <Link href="" className="text-black hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">  
                     Liên Hệ  
