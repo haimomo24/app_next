@@ -1,11 +1,11 @@
 import pool from '@/lib/db';
 
-export async function GET(req) {  // Export named cho phương thức GET
+export async function GET(req) {
+  let connection;
   try {
-    const connection = await pool.getConnection();  // Lấy kết nối từ pool
+    connection = await pool.getConnection();  // Lấy kết nối từ pool
     const [product] = await connection.execute('SELECT * FROM product');
 
-    connection.release();  // Giải phóng kết nối
     return new Response(JSON.stringify(product), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -14,45 +14,70 @@ export async function GET(req) {  // Export named cho phương thức GET
     console.error('Database query error:', error);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
     });
+  } finally {
+    connection?.release();  // Đảm bảo luôn giải phóng kết nối
   }
 }
+
 export async function POST(req) {
+  let connection;
   try {
-    const { title, images, description, category, name, price, status,  } = await req.json();
-    const connection = await pool.getConnection();
+    const { title, images, description, category, name, price, status } = await req.json();
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!name || !price || !title || !images || !description || !category || !status) {
+      return new Response(JSON.stringify({ message: 'Missing required fields' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    connection = await pool.getConnection();
 
     // Thêm sản phẩm vào database
-    const [result] = await connection.execute(
+    const [{ insertId }] = await connection.execute(
       'INSERT INTO product (name, price, title, images, description, category, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [name, price, title, images, description, category, status]
     );
 
-    connection.release();
-
-    const newProduct = { id: result.insertId, name, price, title, images, description, category, status };
+    const newProduct = { id: insertId, name, price, title, images, description, category, status };
     return new Response(JSON.stringify(newProduct), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Location': `/api/product/${newProduct.id}`  // Thêm location cho đối tượng vừa tạo
+      },
     });
   } catch (error) {
     console.error('Error adding product:', error);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
     });
+  } finally {
+    connection?.release();
   }
 }
+
 export async function DELETE(req) {
+  let connection;
   try {
     const { id } = await req.json(); // Get product ID from the request body
-    const connection = await pool.getConnection();
+    connection = await pool.getConnection();
 
-    // Delete the product from the database
+    // Kiểm tra nếu sản phẩm có tồn tại
+    const [rows] = await connection.execute('SELECT * FROM product WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      return new Response(JSON.stringify({ message: 'Product not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Xóa sản phẩm
     await connection.execute('DELETE FROM product WHERE id = ?', [id]);
-
-    connection.release();
 
     return new Response(JSON.stringify({ message: 'Product deleted successfully' }), {
       status: 200,
@@ -62,7 +87,9 @@ export async function DELETE(req) {
     console.error('Error deleting product:', error);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
     });
+  } finally {
+    connection?.release();
   }
 }
