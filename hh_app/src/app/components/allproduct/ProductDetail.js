@@ -4,51 +4,66 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react'; 
 
 const ProductDetail = () => {
-  const { id } = useParams(); // Get 'id' from URL params
+  const { id } = useParams(); // Lấy 'id' từ URL params
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Function to format price
+  // Hàm định dạng giá tiền
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
   useEffect(() => {
-    if (id) {
-      const fetchProduct = async () => {
-        try {
-          const res = await fetch(`/api/product/${id}`); // Use id instead of slug
-          if (!res.ok) {
-            throw new Error('Failed to fetch product details');
-          }
-          const data = await res.json();
-          setProduct(data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchProduct();
+    // Kiểm tra nếu ID không có
+    if (!id) {
+      setError('Thiếu ID sản phẩm.');
+      setLoading(false);
+      return;
     }
+
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`/api/product/${id}`);
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch product details: ${res.status} ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        if (!data || Object.keys(data).length === 0) {
+          throw new Error('Sản phẩm không tìm thấy.');
+        }
+
+        setProduct(data);
+      } catch (err) {
+        setError(err.message); 
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
+  // Hiển thị loading
   if (loading) {
     return <p>Loading...</p>;
   }
 
+  // Hiển thị thông báo lỗi nếu có
   if (error) {
     return <p>Error: {error}</p>;
   }
 
+  // Kiểm tra sản phẩm không tồn tại
   if (!product) {
     return (
       <p>No product found. <a href="/products">Go back to product list</a></p>
     );
   }
 
+  // Hiển thị chi tiết sản phẩm
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white mt-[30px]">
       <div className="container px-5 py-24 mx-auto">
