@@ -1,19 +1,24 @@
 'use client';
 
-import { useParams } from 'next/navigation'; // Import hook mới
-import { useEffect, useState } from 'react'; // Import đúng từ react
+import { useParams } from 'next/navigation'; 
+import { useEffect, useState } from 'react'; 
 
 const ProductDetail = () => {
-  const { slug } = useParams(); // Lấy 'slug' từ URL params
+  const { id } = useParams(); // Get 'id' from URL params
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Function to format price
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
+
   useEffect(() => {
-    if (slug) {
+    if (id) {
       const fetchProduct = async () => {
         try {
-          const res = await fetch(`/api/product/${slug}`);
+          const res = await fetch(`/api/product/${id}`); // Use id instead of slug
           if (!res.ok) {
             throw new Error('Failed to fetch product details');
           }
@@ -28,7 +33,7 @@ const ProductDetail = () => {
 
       fetchProduct();
     }
-  }, [slug]);
+  }, [id]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -39,7 +44,9 @@ const ProductDetail = () => {
   }
 
   if (!product) {
-    return <p>No product found</p>;
+    return (
+      <p>No product found. <a href="/products">Go back to product list</a></p>
+    );
   }
 
   return (
@@ -49,13 +56,13 @@ const ProductDetail = () => {
           <img
             alt={product.name}
             className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-            src={product.images || '/default-image.jpg'} // Thêm ảnh mặc định nếu không có URL
+            src={product.images?.[0] || '/default-image.jpg'}
           />
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-500 tracking-widest">
-              {product.brand || 'BRAND NAME'} // Kiểm tra tồn tại của brand
+              {product.brand || 'BRAND NAME'}
             </h2>
-            <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
+            <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
               {product.name || 'No product name available'}
             </h1>
             <div className="flex mb-4">
@@ -63,7 +70,7 @@ const ProductDetail = () => {
                 {[...Array(5)].map((_, index) => (
                   <svg
                     key={index}
-                    fill={index < product.rating ? 'currentColor' : 'none'}
+                    fill={index < (product.rating || 0) ? 'currentColor' : 'none'}
                     stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -77,12 +84,12 @@ const ProductDetail = () => {
                 <span className="text-gray-600 ml-3">{product.reviews || 0} Reviews</span>
               </span>
             </div>
-            <p className="leading-relaxed mt-[20%]">
+            <p className="leading-relaxed mb-4">
               {product.description || 'No description available'}
             </p>
             <div className="flex mt-[20%]">
               <span className="title-font font-medium text-2xl text-gray-900">
-                {product.price ? `${product.price} VND` : 'Price not available'}
+                {product.price ? formatPrice(product.price) : 'Price not available'}
               </span>
               <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
                 Mua
