@@ -22,7 +22,7 @@ const Navbav = () => {
                             </li>
 
                             <li >
-                                <Link href='filters' className='py-3 inline-block w-full'>Sản Phẩm </Link>
+                                <Link href='/allproduct' className='py-3 inline-block w-full'>Sản Phẩm </Link>
                             </li>
 
                             <li >
