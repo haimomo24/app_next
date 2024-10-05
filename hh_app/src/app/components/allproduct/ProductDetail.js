@@ -3,128 +3,163 @@
 import { useParams } from 'next/navigation'; 
 import { useEffect, useState } from 'react'; 
 
+import CartProduct from './CartProduct';
+import CartShopping from './CartShopping';
+
 const ProductDetail = () => {
-  const { id } = useParams(); // Lấy 'id' từ URL params
+  const { slug } = useParams();  
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Hàm định dạng giá tiền
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  };
+  const [quantity, setQuantity] = useState(1);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [orderDate, setOrderDate] = useState('');
 
   useEffect(() => {
-    // Kiểm tra nếu ID không có
-    if (!id) {
-      setError('Thiếu ID sản phẩm.');
+    if (!slug) {
+      setError('Không tìm thấy sản phẩm (thiếu slug).');
       setLoading(false);
       return;
     }
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`/api/product/${id}`);
-        
+        const res = await fetch(`/api/product/${slug}`); 
+
         if (!res.ok) {
-          throw new Error(`Failed to fetch product details: ${res.status} ${res.statusText}`);
+          throw new Error(`Không thể tải chi tiết sản phẩm: ${res.status} ${res.statusText}`);
         }
 
         const data = await res.json();
         if (!data || Object.keys(data).length === 0) {
-          throw new Error('Sản phẩm không tìm thấy.');
+          throw new Error('Không tìm thấy sản phẩm.');
         }
 
         setProduct(data);
       } catch (err) {
-        setError(err.message); 
+        setError(err.message);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [id]);
+  }, [slug]);
 
-  // Hiển thị loading
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>Đang tải...</p>;
   }
 
-  // Hiển thị thông báo lỗi nếu có
   if (error) {
-    return <p>Error: {error}</p>;
+    return <p>Lỗi: {error}</p>;
   }
 
-  // Kiểm tra sản phẩm không tồn tại
   if (!product) {
-    return (
-      <p>No product found. <a href="/products">Go back to product list</a></p>
-    );
+    return <p>Không tìm thấy sản phẩm. <a href="/products">Quay lại danh sách sản phẩm</a></p>;
   }
 
-  // Hiển thị chi tiết sản phẩm
+  const handleAddToCart = () => {
+    setShowDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setShowDetails(false);
+  };
+
+  const handleCheckout = () => {
+    setShowCheckout(true);
+  };
+
+  const handleSubmitOrder = (e) => {
+    e.preventDefault();
+    // Xử lý đặt hàng ở đây (gửi thông tin đến server hoặc bất kỳ thao tác nào bạn cần)
+    console.log({ address, phone, email, orderDate });
+    // Reset form
+    setShowCheckout(false);
+    setAddress('');
+    setPhone('');
+    setEmail('');
+    setOrderDate('');
+  };
+
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white mt-[30px]">
-      <div className="container px-5 py-24 mx-auto">
+      <div className={`container px-5 py-24 mx-auto ${showDetails ? 'opacity-50' : ''}`}>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
-          <img
-            alt={product.name}
-            className="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-            src={product.images?.[0] || '/default-image.jpg'}
-          />
+          <div className="lg:w-1/2 w-full flex justify-center">
+            <img
+              alt={product.name}
+              className="h-auto max-h-[500px] w-auto object-contain rounded-lg shadow-lg border border-gray-200"
+              src={product.images}
+            />
+          </div>
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-500 tracking-widest">
               {product.brand || 'BRAND NAME'}
             </h2>
             <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
               {product.name || 'No product name available'}
+              <span className="text-green-500 text-sm ml-2">{product.status}</span>
             </h1>
-            <div className="flex mb-4">
-              <span className="flex items-center">
-                {[...Array(5)].map((_, index) => (
-                  <svg
-                    key={index}
-                    fill={index < (product.rating || 0) ? 'currentColor' : 'none'}
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    className="w-4 h-4 text-red-500"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                ))}
-                <span className="text-gray-600 ml-3">{product.reviews || 0} Reviews</span>
-              </span>
-            </div>
             <p className="leading-relaxed mb-4">
-              {product.description || 'No description available'}
+              {product.description || 'Không có mô tả'}
             </p>
-            <div className="flex mt-[20%]">
-              <span className="title-font font-medium text-2xl text-gray-900">
-                {product.price ? formatPrice(product.price) : 'Price not available'}
-              </span>
-              <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
-                Mua
-              </button>
-              <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
-                <svg
-                  fill="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                </svg>
-              </button>
+            <div className="flex items-center mb-4">
+              <span className="mr-4 text-lg">Số lượng:</span>
+              <input 
+                type="number" 
+                value={quantity} 
+                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
+                min="1" 
+                className="border rounded-lg w-16 p-2 text-center"
+              />
             </div>
+            <div className="flex mt-[20%] mb-4">
+              <span className="title-font font-medium text-2xl text-gray-900">
+                {product.price} VND
+              </span>
+            </div>
+            <button 
+              onClick={handleAddToCart}
+              className="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg"
+            >
+              Thêm vào giỏ hàng 
+            </button>
           </div>
         </div>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4 mt-[30px]">
+          Mô tả sản phẩm 
+        </h2>
       </div>
+
+      {/* Phần giỏ hàng */}
+      {showDetails && (
+        <CartProduct 
+          product={product} 
+          quantity={quantity} 
+          onClose={handleCloseDetails} 
+          onCheckout={handleCheckout}
+        />
+      )}
+
+      {/* Form thanh toán */}
+      {showCheckout && (
+        <CartShopping 
+          address={address} 
+          phone={phone} 
+          email={email} 
+          orderDate={orderDate}
+          setAddress={setAddress}
+          setPhone={setPhone}
+          setEmail={setEmail}
+          setOrderDate={setOrderDate}
+          onSubmit={handleSubmitOrder}
+        />
+      )}
     </section>
   );
 };
