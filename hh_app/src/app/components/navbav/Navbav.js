@@ -5,11 +5,21 @@ import React, { useState } from 'react'
 import { CiShoppingCart } from 'react-icons/ci'
 import { BsChevronCompactUp } from 'react-icons/bs'
 import { BiSearch } from 'react-icons/bi'
-import SearchBar from './SearchBar'
+import CartProduct from '../allproduct/CartProduct'
 
 const Navbav = () => {
     const [showProfile, setShowProfile] = useState(false)  
     const [showNav, setShowNav] = useState(false)
+    const [showCart, setShowCart] = useState(false)  // New state for showing cart
+    const [cartProduct, setCartProduct] = useState(null);  // Mock state for selected product
+    const [quantity, setQuantity] = useState(1);  // Default quantity
+    // Mock product data (you can replace this with real cart data)
+    const mockProduct = {
+        id: 1,
+        name: "Sample Product",
+        price: 100000,
+        images: "https://via.placeholder.com/150",
+    };
   return (
     <div className='px-5 max-w-[1280px] mx-auto'>
          <div className='flex items-center justify-between py-4 relative'>
@@ -47,17 +57,24 @@ const Navbav = () => {
 
 
                     </div>
-                    <Link href="/cart">
-                        <div className='p-2 bg-gray-100 rounded-full'>
-                            <CiShoppingCart size={20} />
-                        </div>
-                    </Link>
+                    <div onClick={() => setShowCart(true)} className='p-2 bg-gray-100 rounded-full cursor-pointer'>
+                        <CiShoppingCart size={20} />
+                    </div>
                     <span onClick={() => setShowNav(!showNav)} className='p-[9px] bg-gray-100 rounded-full md:hidden'>
                         <BsChevronCompactUp className={`transition ease-in duration-150 ${showNav ? "rotate-180" : ""}`}/>
                     </span>
                 </div>
             </div>
-
+            {showCart && (
+                <CartProduct
+                    product={mockProduct}  
+                    quantity={quantity}
+                    onClose={() => setShowCart(false)}
+                    onCheckout={() => alert("Proceed to Checkout")} 
+                     
+                />
+                
+            )}
             <div className={`md:hidden ${showNav ? "pb-4 px-5" : "h-0 invisible opacity-0"}`} >
                 <ul className='flex flex-col text-[15px] opacity-75 px-2'>
                     <li> <Link href='/shop' className='py-3 inline-block w-full'>Shop</Link> </li>

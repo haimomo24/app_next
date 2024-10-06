@@ -3,6 +3,7 @@
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const ShoesProduct = () => {
     const [products, setProducts] = useState([]);
@@ -91,34 +92,18 @@ const ShoesProduct = () => {
                     {/* Sidebar */}
                     <div className="md:w-1/3 h-auto mb-4 md:mb-0 border">
                         <div className="h-full p-6 rounded-lg">
-                            <p className="mt-2 text-orange-500">Tìm kiếm sản phẩm</p>
-                            <div className="flex items-center bg-gray-100 p-2 mt-4 rounded-full">
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    className="outline-none bg-transparent ml-2 caret-blue-500 placeholder:font-light placeholder:text-gray-600 text-[15px] w-full"
-                                    value={searchQuery}
-                                    onChange={handleSearch}
-                                />
-                            </div>
-                            {/* Price Range Slider */}
-                            <div className="mb-6 mt-4">
-                                <label className="block mb-2 text-orange-500">Giá (300.000 - 5,000,000 VND):</label>
-                                <input
-                                    type="range"
-                                    min="300000"
-                                    max="5000000"
-                                    value={priceRange[1]}
-                                    className="w-full"
-                                    onChange={handlePriceRangeChange}
-                                />
-                                <p className="text-right text-gray-600">Giá tối đa: {priceRange[1]} VND</p>
-                            </div>
+                            
                             <img
-                                src="https://thegioicaulong.vn/wp-content/uploads/2024/06/top-5-giay-cau-long.jpg"
+                                src="https://babolat.com.vn/wp-content/uploads/2024/03/giay-danh-cau-long-nam-babolat-chat-luong.jpg"
                                 alt="Banner"
-                                className="w-full h-60 object-cover rounded"
+                                className="w-full h-[85%] object-cover rounded"
+
                             />
+                               <Link href="/allproduct">
+                            <button type="button" class=" mt-[10%] focus:outline-none text-white  bg-orange-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">
+                                Xem Thêm 
+                            </button>
+                            </Link>
                         </div>
                     </div>
 
@@ -126,7 +111,8 @@ const ShoesProduct = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-4 md:w-2/3">
                         {currentProducts.length > 0 ? (
                             currentProducts.map((product) => (
-                                <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
+                                <Link href="/allproduct">
+                                        <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
                                     <img
                                         src={product.images}
                                         alt={product.name}
@@ -136,6 +122,8 @@ const ShoesProduct = () => {
                                     <p className="text-red-500">{product.price} VND</p>
                                     <p className="text-green-500">{product.status}</p>
                                 </div>
+                                </Link>
+                                
                             ))
                         ) : (
                             <p className="text-center text-gray-500 col-span-full">Không có sản phẩm nào.</p>

@@ -78,36 +78,19 @@ const Badmintonproduct = () => {
                     {/* Sidebar */}
                     <div className="md:w-1/3 h-auto mb-4 md:mb-0 border">
                         <div className="h-full p-6 rounded-lg">
-                            <p className="mt-2 text-orange-500 ">Tìm kiếm sản phẩm </p>
-                            <div className="flex items-center bg-gray-100 p-2 mt-[20px] rounded-full max-md:hidden">
-
-                                <input
-                                    type="text"
-                                    placeholder="seach"
-                                    className="outline-none bg-transparent ml-2 caret-blue-500 placehoder:font-light placehoder:text-gray-600 text-[15px]"
-                                    value={searchQuery}
-                                    onChange={handleSearch}
-                                />
-                            </div>
-                            {/* Price Range Slider */}
-                            <div className="mb-6 mt-[20px]">
-                                <label className="block mb-2 text-orange-500  "> Giá (300.000 - 5,000,000 VND):</label>
-                                <input
-                                    type="range"
-                                    min="300000"
-                                    max="5000000"
-                                    value={priceRange[1]}
-                                    className="w-full "
-                                    onChange={handlePriceRangeChange}
-                                />
-                                <p className="text-right text-gray-600">Giá tối đa: {priceRange[1]} VND</p>
-                            </div>
+                           
 
                             <div className="flex flex-col md:flex-row"></div>
-                            <img src="https://thethao365.com.vn/Data/upload/images/Product/Caulong/vot-cau-long-lining-chuyen-cong1.jpg"
+                            <img src="https://vtv1.mediacdn.vn/thumb_w/640/2021/11/22/fetc4geviaqnu16-16375388496191831192330.jpeg"
                                 alt="Product 2"
-                                className=" w-[100%] h-[58%] object-cover rounded"
+                                className=" w-[100%] h-[90%] object-cover rounded"
                             />
+                            <Link href="/allproduct">
+                            <button type="button" class=" mt-[10%] focus:outline-none text-white  bg-orange-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">
+                                Xem Thêm 
+                            </button>
+                            </Link>
+                           
 
 
 
@@ -117,7 +100,7 @@ const Badmintonproduct = () => {
                     {/* Products */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-[10px] md:w-2/3">
                         {currentProducts.map((product) => (
-                            <Link href="/">
+                            <Link href="/allproduct">
                             <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
                                 <img src={product.images}
                                     alt={product.name}

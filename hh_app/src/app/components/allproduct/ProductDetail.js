@@ -1,13 +1,14 @@
 'use client';
 
-import { useParams } from 'next/navigation'; 
-import { useEffect, useState } from 'react'; 
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import CartProduct from './CartProduct';
 import CartShopping from './CartShopping';
+import Comment from './Comment';
 
 const ProductDetail = () => {
-  const { slug } = useParams();  
+  const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +29,7 @@ const ProductDetail = () => {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`/api/product/${slug}`); 
+        const res = await fetch(`/api/product/${slug}`);
 
         if (!res.ok) {
           throw new Error(`Không thể tải chi tiết sản phẩm: ${res.status} ${res.statusText}`);
@@ -93,7 +94,7 @@ const ProductDetail = () => {
           <div className="lg:w-1/2 w-full flex justify-center">
             <img
               alt={product.name}
-              className="h-auto max-h-[500px] w-auto object-contain rounded-lg shadow-lg border border-gray-200"
+              className="h-auto max-h-[600px] w-auto object-contain rounded-lg  "
               src={product.images}
             />
           </div>
@@ -110,11 +111,11 @@ const ProductDetail = () => {
             </p>
             <div className="flex items-center mb-4">
               <span className="mr-4 text-lg">Số lượng:</span>
-              <input 
-                type="number" 
-                value={quantity} 
+              <input
+                type="number"
+                value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
-                min="1" 
+                min="1"
                 className="border rounded-lg w-16 p-2 text-center"
               />
             </div>
@@ -123,35 +124,55 @@ const ProductDetail = () => {
                 {product.price} VND
               </span>
             </div>
-            <button 
+            <button
               onClick={handleAddToCart}
               className="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg"
             >
-              Thêm vào giỏ hàng 
+              Thêm vào giỏ hàng
             </button>
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 mt-[30px]">
-          Mô tả sản phẩm 
-        </h2>
+        <div className="bg-gray-100 p-6 mt-[30px]">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-orange-500 border-b-2 border-orange-500 pb-2">Mô tả sản phẩm </h2>
+            <div className="mt-4">
+              <h3 className="text-lg font-bold">1. Giới thiệu </h3>
+              <p className="mt-2 text-gray-700">
+                {product.description}
+              </p>
+              <div className="flex justify-center">
+                <img src={product.images} alt="Lining Turbo Charging Marshal" className="mt-4 w-auto h-auto object-contain rounded-lg" />
+              </div>
+            </div>
+            <div className="mt-6">
+              <h3 className="text-lg font-bold">2. Thông số kỹ thuật </h3>
+              <ul className="list-disc list-inside mt-2 text-gray-700">
+                <li> {product.title}  </li>
+                <li>Trọng lượng: 75g</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+     <Comment/>
       </div>
 
       {/* Phần giỏ hàng */}
       {showDetails && (
-        <CartProduct 
-          product={product} 
-          quantity={quantity} 
-          onClose={handleCloseDetails} 
+        <CartProduct
+          product={product}
+          quantity={quantity}
+          onClose={handleCloseDetails}
           onCheckout={handleCheckout}
         />
       )}
 
       {/* Form thanh toán */}
       {showCheckout && (
-        <CartShopping 
-          address={address} 
-          phone={phone} 
-          email={email} 
+        <CartShopping
+          address={address}
+          phone={phone}
+          email={email}
           orderDate={orderDate}
           setAddress={setAddress}
           setPhone={setPhone}
