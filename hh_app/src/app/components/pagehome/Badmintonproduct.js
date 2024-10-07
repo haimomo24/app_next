@@ -81,7 +81,7 @@ const Badmintonproduct = () => {
                            
 
                             <div className="flex flex-col md:flex-row"></div>
-                            <img src="https://vtv1.mediacdn.vn/thumb_w/640/2021/11/22/fetc4geviaqnu16-16375388496191831192330.jpeg"
+                            <img src="https://www.tokyoweekender.com/wp-content/uploads/2019/10/Kento-Momota.jpg"
                                 alt="Product 2"
                                 className=" w-[100%] h-[90%] object-cover rounded"
                             />

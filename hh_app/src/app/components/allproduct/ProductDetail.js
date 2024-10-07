@@ -19,6 +19,7 @@ const ProductDetail = () => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [orderDate, setOrderDate] = useState('');
+  const [orderSuccess, setOrderSuccess] = useState(false); 
 
   useEffect(() => {
     if (!slug) {
@@ -74,21 +75,64 @@ const ProductDetail = () => {
   const handleCheckout = () => {
     setShowCheckout(true);
   };
+  const handleCancelCheckout = () => {
+    setShowCheckout(false); // Đóng form thanh toán
+  };
 
-  const handleSubmitOrder = (e) => {
+  const handleSubmitOrder =  async (e) => {
     e.preventDefault();
-    // Xử lý đặt hàng ở đây (gửi thông tin đến server hoặc bất kỳ thao tác nào bạn cần)
-    console.log({ address, phone, email, orderDate });
-    // Reset form
-    setShowCheckout(false);
-    setAddress('');
-    setPhone('');
-    setEmail('');
-    setOrderDate('');
+  
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: product.name,
+          images: product.images,
+          sodienthoai: phone,
+          diachi: address,
+          ngaymua: orderDate,
+          price: product.price,
+          email: email,
+          soluong: quantity,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Đặt hàng không thành công');
+      }
+  
+      const data = await response.json();
+      console.log('Đặt hàng thành công:', data);
+  
+      // Reset form và ẩn form thanh toán
+      setShowCheckout(false);
+      setAddress('');
+      setPhone('');
+      setEmail('');
+      setOrderDate('');
+      // Hiển thị thông báo đặt hàng thành công
+      setOrderSuccess(true);  // Đặt trạng thái thành công
+
+      // Tự động ẩn thông báo sau 3 giây
+      setTimeout(() => {
+        setOrderSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Lỗi khi đặt hàng:', error);
+    }
   };
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white mt-[30px]">
+       {/* Hiển thị thông báo thành công */}
+       {orderSuccess && (
+        <div className="bg-green-500 text-white p-4 rounded-lg mt-4">
+          Đặt hàng thành công! Cảm ơn bạn đã đặt hàng.
+        </div>
+      )}
       <div className={`container px-5 py-24 mx-auto ${showDetails ? 'opacity-50' : ''}`}>
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <div className="lg:w-1/2 w-full flex justify-center">
@@ -170,15 +214,17 @@ const ProductDetail = () => {
       {/* Form thanh toán */}
       {showCheckout && (
         <CartShopping
-          address={address}
-          phone={phone}
-          email={email}
-          orderDate={orderDate}
-          setAddress={setAddress}
-          setPhone={setPhone}
-          setEmail={setEmail}
-          setOrderDate={setOrderDate}
-          onSubmit={handleSubmitOrder}
+        product={product} // Truyền thông tin sản phẩm
+        address={address}
+        phone={phone}
+        email={email}
+        orderDate={orderDate}
+        setAddress={setAddress}
+        setPhone={setPhone}
+        setEmail={setEmail}
+        setOrderDate={setOrderDate}
+        onSubmit={handleSubmitOrder}
+        onCancel={handleCancelCheckout}
         />
       )}
     </section>
