@@ -93,3 +93,39 @@ export async function DELETE(req) {
     connection?.release();
   }
 }
+
+export async function PUT(req) {
+  let connection;
+  try {
+    const { id, name, price, title, images, description, category, status } = await req.json();
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!id || !name || !price || !title || !images || !description || !category || !status) {
+      return new Response(JSON.stringify({ message: 'Missing required fields' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    connection = await pool.getConnection();
+
+    // Cập nhật sản phẩm trong database
+    await connection.execute(
+      'UPDATE product SET name = ?, price = ?, title = ?, images = ?, description = ?, category = ?, status = ? WHERE id = ?',
+      [name, price, title, images, description, category, status, id]
+    );
+
+    return new Response(JSON.stringify({ message: 'Product updated successfully' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error updating product:', error);
+    return new Response(JSON.stringify({ message: 'Internal Server Error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    });
+  } finally {
+    connection?.release();
+  }
+}

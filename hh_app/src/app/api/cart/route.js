@@ -98,13 +98,13 @@ export async function GET(req) {
   export async function PUT(req) {
     let connection;
     try {
-      const { id, name, price, images, description, diachi, sodienthoai } = await req.json(); // Nhận dữ liệu từ body
+      const { id, name, price, images, diachi, sodienthoai } = await req.json(); // Nhận dữ liệu từ body
   
       connection = await pool.getConnection();
       
       const result = await connection.execute(
-        'UPDATE cartproduct SET name = ?, price = ?, images = ?, description = ?, diachi = ?, sodienthoai = ? WHERE id = ?',
-        [name, price, images, description, diachi, sodienthoai, id]
+        'UPDATE cartproduct SET name = ?, price = ?, images = ?, diachi = ?, sodienthoai = ? WHERE id = ?',
+        [name, price, images, diachi, sodienthoai, id]
       );
   
       if (result.affectedRows === 0) {

@@ -198,13 +198,7 @@ const UserDbPage = () => {
                   className="border p-2 mb-2 w-full"
                   required
                 />
-                <textarea
-                  value={editingProduct.description}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-                  placeholder="Mô tả"
-                  className="border p-2 mb-2 w-full"
-                  required
-                />
+                
                 <input
                   type="text"
                   value={editingProduct.diachi}

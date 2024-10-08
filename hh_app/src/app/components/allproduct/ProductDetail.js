@@ -208,7 +208,9 @@ const ProductDetail = () => {
           quantity={quantity}
           onClose={handleCloseDetails}
           onCheckout={handleCheckout}
+          
         />
+        
       )}
 
       {/* Form thanh toán */}
