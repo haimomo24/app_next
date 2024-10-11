@@ -167,8 +167,8 @@ const ProductDb = () => {
                         <FontAwesomeIcon icon={faTrash} className="text-orange-500 flex justify-center h-5 w-5" />
                       </button>
                       {/* Nút sửa */}
-                      <button onClick={() => editProduct(product)} className="text-blue-500 ml-2.5">
-                        <FontAwesomeIcon icon={faPenSquare} className="text-blue-500 flex justify-center h-5 w-5" />
+                      <button onClick={() => editProduct(product)} className="text-red-500 ml-2.5">
+                        <FontAwesomeIcon icon={faPenSquare} className="text-orange-500  flex justify-center h-5 w-5" />
                       </button>
                     </div>
                   </div>
