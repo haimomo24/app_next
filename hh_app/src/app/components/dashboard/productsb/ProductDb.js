@@ -15,20 +15,18 @@ const ProductDb = () => {
     const fetchProduct = async () => {
       const res = await fetch('/api/product');
 
-      // Kiểm tra nếu phản hồi thành công
       if (!res.ok) {
         console.error('Lỗi khi lấy danh sách sản phẩm:', res.status, res.statusText);
         return;
       }
 
       const data = await res.json();
-      setProducts(data); // Đảm bảo dữ liệu trả về là danh sách sản phẩm
+      setProducts(data); 
     };
 
     fetchProduct();
   }, []);
 
-  // Hàm để xóa sản phẩm
   const deleteProduct = async (id) => {
     const confirmed = confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
     if (!confirmed) return;
@@ -37,11 +35,10 @@ const ProductDb = () => {
       const res = await fetch(`/api/product`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }), // Gửi ID sản phẩm cần xóa
+        body: JSON.stringify({ id }), 
       });
 
       if (res.ok) {
-        // Loại bỏ sản phẩm đã xóa khỏi danh sách hiển thị
         setProducts(products.filter(product => product.id !== id));
       } else {
         console.error('Lỗi khi xóa sản phẩm:', res.status, res.statusText);
@@ -51,12 +48,10 @@ const ProductDb = () => {
     }
   };
 
-  // Hàm để kích hoạt chế độ sửa sản phẩm
   const editProduct = (product) => {
     setEditingProduct(product);
   };
 
-  // Hàm để xử lý cập nhật sản phẩm
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,13 +59,12 @@ const ProductDb = () => {
       const res = await fetch(`/api/product`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingProduct), // Gửi dữ liệu sản phẩm đã chỉnh sửa
+        body: JSON.stringify(editingProduct), 
       });
 
       if (res.ok) {
-        // Cập nhật danh sách sản phẩm sau khi chỉnh sửa thành công
         setProducts(products.map(p => p.id === editingProduct.id ? editingProduct : p));
-        setEditingProduct(null); // Đóng form chỉnh sửa
+        setEditingProduct(null); 
       } else {
         console.error('Lỗi khi cập nhật sản phẩm:', res.status, res.statusText);
       }
@@ -79,19 +73,20 @@ const ProductDb = () => {
     }
   };
 
-  // Phân trang: lấy sản phẩm cho trang hiện tại
+  const cancelEdit = () => {
+    setEditingProduct(null); // Reset trạng thái chỉnh sửa
+  };
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Chuyển sang trang tiếp theo
   const nextPage = () => {
     if (currentPage < Math.ceil(products.length / productsPerPage)) {
       setCurrentPage(prevPage => prevPage + 1);
     }
   };
 
-  // Quay lại trang trước
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
@@ -114,8 +109,7 @@ const ProductDb = () => {
               </button>
             </div>
 
-             {/* Hiển thị biểu mẫu sửa sản phẩm nếu có sản phẩm đang được chỉnh sửa */}
-             {editingProduct && (
+            {editingProduct && (
               <form onSubmit={handleEditSubmit} className="mt-6 p-4 border-2 border-gray-200 rounded-lg">
                 <h3 className="font-bold text-xl mb-4">Chỉnh sửa sản phẩm</h3>
                 <label>Tên sản phẩm:</label>
@@ -132,21 +126,25 @@ const ProductDb = () => {
                   onChange={(e) => setEditingProduct({ ...editingProduct, price: e.target.value })}
                   className="border p-2 w-full mb-4"
                 />
-                   <label>Mô tả sản phẩm :</label>
+                <label>Mô tả sản phẩm :</label>
                 <input
                   type="text"
                   value={editingProduct.description}
                   onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                   className="border p-2 w-full mb-4"
                 />
-                {/* Thêm các trường tương tự cho mô tả, hình ảnh, v.v. */}
-                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg">
-                  Cập nhật sản phẩm
-                </button>
+
+                <div className="flex space-x-4">
+                  <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg">
+                    Cập nhật sản phẩm
+                  </button>
+                  <button type="button" onClick={cancelEdit} className="bg-gray-500 text-white py-2 px-4 rounded-lg">
+                    Hủy
+                  </button>
+                </div>
               </form>
             )}
 
-            {/* Hiển thị danh sách sản phẩm */}
             {currentProducts.map((product) => (
               <div key={product.id} className="rounded-3xl border-2 border-gray-200 p-4 lg:p-8 grid grid-cols-12 mb-8 gap-y-4">
                 <div className="col-span-12 lg:col-span-2 img box">
@@ -162,11 +160,9 @@ const ProductDb = () => {
                       {product.name}
                     </h5>
                     <div className='flex'>
-                      {/* Nút xóa */}
                       <button onClick={() => deleteProduct(product.id)} className="text-red-500">
                         <FontAwesomeIcon icon={faTrash} className="text-orange-500 flex justify-center h-5 w-5" />
                       </button>
-                      {/* Nút sửa */}
                       <button onClick={() => editProduct(product)} className="text-red-500 ml-2.5">
                         <FontAwesomeIcon icon={faPenSquare} className="text-orange-500  flex justify-center h-5 w-5" />
                       </button>
@@ -184,9 +180,6 @@ const ProductDb = () => {
               </div>
             ))}
 
-           
-
-            {/* Điều khiển phân trang */}
             <div className="flex justify-end w-full">
               <button 
                 className={`bg-gray-200 py-2 px-4 rounded mx-2 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`} 
