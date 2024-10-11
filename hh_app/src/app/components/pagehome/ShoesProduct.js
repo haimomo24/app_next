@@ -111,7 +111,7 @@ const ShoesProduct = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ml-4 md:w-2/3">
                         {currentProducts.length > 0 ? (
                             currentProducts.map((product) => (
-                                <Link href="/allproduct">
+                                <Link href={`/allproduct/productslisting/${product.id}`} key={product.id}>
                                         <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
                                     <img
                                         src={product.images}

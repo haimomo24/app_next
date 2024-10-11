@@ -110,7 +110,7 @@ const BaloProduct = () => {
                             {currentProducts.length > 0 ? (
 
                                 currentProducts.map((product) => (
-                                    <Link href="/allproduct">
+                                    <Link href={`/allproduct/productslisting/${product.id}`} key={product.id}>
                                              <div className="border rounded-lg h-full p-4 bg-white shadow-md transition transform hover:scale-105" key={product.id}>
                                         <img
                                             src={product.images}
