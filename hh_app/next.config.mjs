@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    images: {
+      domains: ['cdn.shopvnb.com'], // Thêm tên miền của hình ảnh
+    },
+  };
+  
+  export default nextConfig;
